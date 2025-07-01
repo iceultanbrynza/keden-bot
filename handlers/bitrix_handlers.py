@@ -10,7 +10,7 @@ import httpx
 router = Router()
 
 # Заявка отработана
-@router.callback_query(F.data.startswith("feedbackDataCompleted/"))
+@router.callback_query(F.data.startswith("applicationDataCompleted/"))
 async def ApplIsCompleted(callback:CallbackQuery):
     id = callback.data.split('/')[1]
     kb = callback.message.reply_markup
@@ -45,7 +45,7 @@ async def ApplIsCompleted(callback:CallbackQuery):
             await callback.message.edit_text("Ошибка. Ответьте еще раз, пожалуйста", reply_markup=kb)
 
 # Заявка НЕ отработана
-@router.callback_query(F.data.startswith("feedbackDataNotCompleted/"))
+@router.callback_query(F.data.startswith("applicationDataNotCompleted/"))
 async def ApplIsNotCompleted(callback:CallbackQuery):
     id = callback.data.split('/')[1]
     kb = callback.message.reply_markup

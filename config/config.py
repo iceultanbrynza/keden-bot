@@ -1,17 +1,20 @@
 from dataclasses import dataclass
-from environs import Env
 from pathlib import Path
+import os
 
-env = Env()
 env_path = Path(__file__).resolve().parent / '.env'
-if env_path.exists():
-    env.read_env(env_path)
 
-URL = env("BITRIX_API")
-HOST=env('REDIS_HOST')
-PORT=env('REDIS_PORT')
-PASSWORD=env('REDIS_PASSWORD')
-DJANGO_URL=env('DJANGO_URL')
+STATUS = os.getenv("STATUS", "development")
+
+if STATUS=="development":
+    from dotenv import load_dotenv
+    load_dotenv(dotenv_path=env_path)
+
+URL=os.getenv("BITRIX_API")
+HOST=os.getenv('REDIS_HOST')
+PORT=os.getenv('REDIS_PORT')
+PASSWORD=os.getenv('REDIS_PASSWORD')
+DJANGO_URL=os.getenv('DJANGO_URL')
 
 @dataclass
 class Config:
@@ -19,10 +22,14 @@ class Config:
     admins:list[str]
 
 def load_config():
-    env = Env()
-    env.read_env()
-
-    return Config(
-        token=env('TOKEN'),
-        admins=list(map(int, env.list('ADMINS')))
-    )
+    admins = os.getenv('ADMINS')
+    if admins:
+        return Config(
+            token=os.getenv('TOKEN'),
+            admins=list(map(int, os.getenv('ADMINS').split(',')))
+        )
+    else:
+        return Config(
+                token=os.getenv('TOKEN'),
+                admins=list(map(int, os.getenv('ADMINS')))
+            )
