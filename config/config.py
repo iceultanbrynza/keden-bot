@@ -4,12 +4,6 @@ import os
 
 env_path = Path(__file__).resolve().parent / '.env'
 
-STATUS = os.getenv("STATUS", "development")
-
-if STATUS=="development":
-    from dotenv import load_dotenv
-    load_dotenv(dotenv_path=env_path)
-
 URL=os.getenv("BITRIX_API")
 HOST=os.getenv('REDIS_HOST')
 PORT=os.getenv('REDIS_PORT')

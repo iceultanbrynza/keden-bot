@@ -27,22 +27,20 @@ async def ApplIsCompleted(callback:CallbackQuery):
             "Content-Type": "application/json",
             "Accept": "application/json"
     }
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                f"{URL}/crm.item.update",
+                json=body,
+                headers=headers
+            )
+            data = response.json()
+        await callback.message.edit_text("Ваша проблема отработана.\n" \
+                                        "Если обнаружите новые проблемы, обращайтесь в Keden Bot.\n" \
+                                        "Наша тех.поддержка оперативно решит проблему.")
 
-    async with httpx.AsyncClient() as client:
-        try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                response = await client.post(
-                    f"{URL}/crm.item.update",
-                    json=body,
-                    headers=headers
-                )
-                data = response.json()
-            await callback.message.edit_text("Ваша проблема отработана.\n" \
-                                            "Если обнаружите новые проблемы, обращайтесь в Keden Bot.\n" \
-                                            "Наша тех.поддержка оперативно решит проблему.")
-
-        except httpx.RequestError:
-            await callback.message.edit_text("Ошибка. Ответьте еще раз, пожалуйста", reply_markup=kb)
+    except httpx.RequestError:
+        await callback.message.edit_text("Ошибка. Ответьте еще раз, пожалуйста", reply_markup=kb)
 
 # Заявка НЕ отработана
 @router.callback_query(F.data.startswith("applicationDataNotCompleted/"))
@@ -63,16 +61,15 @@ async def ApplIsNotCompleted(callback:CallbackQuery):
             "Accept": "application/json"
     }
 
-    async with httpx.AsyncClient() as client:
-        try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                response = await client.post(
-                    f"{URL}/crm.item.update",
-                    json=body,
-                    headers=headers
-                )
-                data = response.json()
-            await callback.message.edit_text("Ваша проблема будет рассмотрена повторно")
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                f"{URL}/crm.item.update",
+                json=body,
+                headers=headers
+            )
+            data = response.json()
+        await callback.message.edit_text("Ваша проблема будет рассмотрена повторно")
 
-        except httpx.RequestError:
-            await callback.message.edit_text("Ошибка. Ответьте еще раз, пожалуйста", reply_markup=kb)
+    except httpx.RequestError:
+        await callback.message.edit_text("Ошибка. Ответьте еще раз, пожалуйста", reply_markup=kb)
